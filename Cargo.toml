@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "crates/rapidraw-gpui",
+    "crates/rapidraw-core",
+    "crates/rapidraw-pipeline"]
+resolver = "2"

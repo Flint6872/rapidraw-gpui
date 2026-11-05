@@ -1,0 +1,16 @@
+[package]
+name = "rapidraw-pipeline"
+version = "0.0.1"
+edition = "2024"
+
+[dependencies]
+# Bring in core to know about metadata settings and pixel layouts
+rapidraw-core = { path = "../rapidraw-core" }
+
+# Native graphics driver abstraction layers
+wgpu = "30.0"
+bytemuck = { version = "1.25", features = ["derive"] } # Safely passes data structures to shaders
+
+# Async tracking
+futures-util = "0.3"
+tokio = { version = "1.54", features = ["sync", "rt"] }
