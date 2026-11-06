@@ -3,10 +3,21 @@ name = "rapidraw-gpui"
 version = "0.0.1"
 edition = "2024"
 
+[lib]
+name = "rapidraw_gpui"
+crate-type = ["lib", "cdylib", "staticlib"]
+
+[[bin]]
+name = "rapidraw-gpui"
+path = "src/main.rs"
+
 [dependencies]
 gpui-kit = "0.9.0"
-gpui_util = "0.2.2"
+gpui_util = "0.2"
 rapidraw-core = { path = "../rapidraw-core" }
 rapidraw-pipeline = { path = "../rapidraw-pipeline" }
 image = "0.25"
 rfd = "0.15"
+
+[target.'cfg(target_os = "android")'.dependencies]
+android-activity = { version = "0.6", features = ["native-activity"] }
