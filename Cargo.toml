@@ -4,3 +4,21 @@ members = [
     "crates/rapidraw-core",
     "crates/rapidraw-pipeline"]
 resolver = "2"
+
+
+
+# Optimize dependency crates in debug builds (Fixes image decode slowdowns)
+[profile.dev.package.image]
+opt-level = 3
+
+[profile.dev.package.jpeg-decoder]
+opt-level = 3
+
+[profile.dev.package.png]
+opt-level = 3
+
+[profile.dev.package.rapidraw-core]
+opt-level = 3
+
+[profile.dev.package.rapidraw-pipeline]
+opt-level = 3

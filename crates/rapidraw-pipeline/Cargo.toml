@@ -14,3 +14,6 @@ bytemuck = { version = "1.25", features = ["derive"] } # Safely passes data stru
 # Async tracking
 futures-util = "0.3"
 tokio = { version = "1.54", features = ["sync", "rt"] }
+
+
+rayon = "1.12"
