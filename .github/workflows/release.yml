@@ -6,6 +6,9 @@ on:
     tags:
       - "v*" # Triggers automatically when you push a tag like v1.0.0
 
+permissions:
+  contents: write
+
 env:
   ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
