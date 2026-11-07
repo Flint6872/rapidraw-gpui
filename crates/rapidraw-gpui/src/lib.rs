@@ -111,38 +111,47 @@ impl MainView {
     }
 
     pub fn open_file_dialog(&mut self, _window: &mut Window, cx: &mut Context<Self>) {
-        if let Some(path) = rfd::FileDialog::new()
-            .add_filter("Images", &["png", "jpg", "jpeg", "webp", "tiff"])
-            .pick_file()
+        #[cfg(not(any(target_os = "android", target_os = "ios")))]
         {
-            cx.spawn(move |this: WeakEntity<Self>, async_cx_ref: &mut AsyncApp| {
-                let mut async_cx = async_cx_ref.clone();
-                let path_clone = path.clone();
+            if let Some(path) = rfd::FileDialog::new()
+                .add_filter("Images", &["png", "jpg", "jpeg", "webp", "tiff"])
+                .pick_file()
+            {
+                cx.spawn(move |this: WeakEntity<Self>, async_cx_ref: &mut AsyncApp| {
+                    let mut async_cx = async_cx_ref.clone();
+                    let path_clone = path.clone();
 
-                async move {
-                    let load_result = async_cx
-                        .background_executor()
-                        .spawn({
-                            let path = path_clone.clone();
-                            async move { rapidraw_core::load_image_file(path) }
-                        })
-                        .await;
+                    async move {
+                        let load_result = async_cx
+                            .background_executor()
+                            .spawn({
+                                let path = path_clone.clone();
+                                async move { rapidraw_core::load_image_file(path) }
+                            })
+                            .await;
 
-                    this.update(&mut async_cx, |this, cx| {
-                        match load_result {
-                            Ok(buffer) => {
-                                this.state.base_buffer = buffer;
-                                this.state.current_file = Some(path_clone);
-                                this.trigger_async_reprocess(cx);
+                        this.update(&mut async_cx, |this, cx| {
+                            match load_result {
+                                Ok(buffer) => {
+                                    this.state.base_buffer = buffer;
+                                    this.state.current_file = Some(path_clone);
+                                    this.trigger_async_reprocess(cx);
+                                }
+                                Err(err) => eprintln!("Failed to load image: {err}"),
                             }
-                            Err(err) => eprintln!("Failed to load image: {err}"),
-                        }
-                        cx.notify();
-                    })
-                    .ok();
-                }
-            })
-            .detach();
+                            cx.notify();
+                        })
+                        .ok();
+                    }
+                })
+                .detach();
+            }
+        }
+
+        #[cfg(any(target_os = "android", target_os = "ios"))]
+        {
+            let _ = cx;
+            eprintln!("Native mobile file picker will be integrated via platform channel.");
         }
     }
 
