@@ -1,4 +1,4 @@
-use rapidraw_gpui::run_desktop_app; // <--- Calls the desktop-specific entry point
+use rapidraw_gpui::run_app; // <--- Calls the desktop-specific entry point
 
 fn main() {
     // Linux Wayland workaround (remains as is)
@@ -20,5 +20,5 @@ fn main() {
         }
     }
 
-    run_desktop_app(); // <--- Call the new desktop entry point
+    run_app(); // <--- Call the new desktop entry point
 }

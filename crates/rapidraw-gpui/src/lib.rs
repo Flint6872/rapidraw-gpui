@@ -280,7 +280,6 @@ pub fn android_main(_app: android_activity::AndroidApp) {
 pub extern "C" fn rapidraw_ios_main() {
     run_app();
 }
-}
 
 // Android native entrypoint (called by the Android host)
 #[cfg(target_os = "android")]
