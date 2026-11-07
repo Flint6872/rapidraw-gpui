@@ -188,16 +188,18 @@ jobs:
           script: |
             const fs = require('fs');
             const path = '${{ matrix.archive_name }}';
-
             const tag = context.ref.replace('refs/tags/', '');
+
             let release;
             try {
+              // Get release by tag
               release = await github.rest.repos.getReleaseByTag({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 tag: tag,
               });
             } catch (e) {
+              // Create release if it doesn't exist yet
               release = await github.rest.repos.createRelease({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -207,11 +209,30 @@ jobs:
                 prerelease: false,
               });
             }
-
-            await github.rest.repos.uploadReleaseAsset({
+            const existingAssets = await github.rest.repos.listReleaseAssets({
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: release.data.id,
-              name: path,
-              data: fs.readFileSync(path),
             });
+
+            for (const asset of existingAssets.data) {
+              if (asset.name === path) {
+                console.log(`Deleting existing asset: ${asset.name}`);
+                await github.rest.repos.deleteReleaseAsset({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  asset_id: asset.id,
+                });
+                break; // Assuming only one asset with this name, exit loop
+              }
+            }
+
+             console.log(`Uploading new asset: ${path}`);
+              await github.rest.repos.uploadReleaseAsset({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: release.data.id,
+                name: path,
+                data: fs.readFileSync(path),
+                // contentType is often inferred, but can be set explicitly if needed
+              });
