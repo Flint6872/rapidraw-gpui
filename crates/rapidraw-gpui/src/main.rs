@@ -1,7 +1,7 @@
-use rapidraw_gpui::run_app;
+use rapidraw_gpui::run_desktop_app; // <--- Calls the desktop-specific entry point
 
 fn main() {
-    // Linux Wayland workaround
+    // Linux Wayland workaround (remains as is)
     #[cfg(target_os = "linux")]
     {
         if std::env::var("WAYLAND_DISPLAY").is_ok() && std::env::var("RAPIDRAW_X11_FORCED").is_err()
@@ -20,5 +20,5 @@ fn main() {
         }
     }
 
-    run_app();
+    run_desktop_app(); // <--- Call the new desktop entry point
 }
