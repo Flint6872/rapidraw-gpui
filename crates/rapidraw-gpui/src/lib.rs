@@ -8,11 +8,13 @@ use components::menus::setup_menus;
 use components::sidebar::render_sidebar;
 use gpui_kit::component::Root;
 use gpui_kit::component::slider::{SliderEvent, SliderState};
-use gpui_kit::prelude::FluentBuilder;
-use gpui_kit::*;
+use gpui_kit::{prelude::FluentBuilder, *};
 use gpui_util::ResultExt;
 use state::AppState;
 use std::sync::Arc;
+
+#[cfg(any(target_os = "android", target_os = "ios"))]
+use gpui_mobile; // Import gpui-mobile for mobile entry points
 
 pub fn is_mobile() -> bool {
     cfg!(any(target_os = "ios", target_os = "android"))
@@ -147,10 +149,9 @@ impl MainView {
                 .detach();
             }
         }
-
         #[cfg(any(target_os = "android", target_os = "ios"))]
         {
-            let _ = cx;
+            let _ = cx; // Suppress unused warning
             eprintln!("Native mobile file picker will be integrated via platform channel.");
         }
     }
@@ -184,7 +185,7 @@ impl Render for MainView {
             .id("main-view-container")
             .flex()
             .size_full()
-            .when(is_touch, |d| d.flex_col_reverse())
+            .when(is_touch, |d| d.flex_col_reverse()) // Mobile vertical layout
             .on_action(cx.listener(|this, _: &OpenImage, window, cx| {
                 this.open_file_dialog(window, cx);
             }))
@@ -211,90 +212,94 @@ impl Render for MainView {
     }
 }
 
-/// Core application bootstrap shared across Desktop, iOS, and Android
-pub fn run_app() {
-    gpui_kit::application().run(|cx: &mut App| {
-        gpui_kit::component::init(cx);
+// --- Common UI Setup Function (Moved before platform entry points) ---
+fn start_rapidraw_ui_common(cx: &mut App) {
+    gpui_kit::component::init(cx);
 
-        // Menus are only applicable to desktop
-        if !is_mobile() {
-            setup_menus(cx);
+    // Menus are only applicable to desktop
+    if !is_mobile() {
+        setup_menus(cx);
+    }
+
+    let window_options = if is_mobile() {
+        // Mobile: Fullscreen window without desktop borders
+        WindowOptions {
+            kind: WindowKind::Normal,
+            window_decorations: None,
+            focus: true,
+            show: true,
+            is_resizable: true, // Mobile apps are often resizable by system (e.g. split screen)
+            is_movable: false,  // Not movable on mobile
+            titlebar: None,     // No titlebar on mobile
+            window_bounds: Some(WindowBounds::Fullscreen(Bounds::default())), // Fullscreen for mobile apps
+            ..Default::default()
         }
-
-        let window_options = if is_mobile() {
-            // Mobile: Fullscreen window without desktop borders
-            WindowOptions {
-                kind: WindowKind::Normal,
-                window_decorations: None,
-                ..Default::default()
-            }
-        } else {
-            // Desktop: 1280x800 centered with native decorations
-            let initial_bounds = Bounds::centered(None, size(px(1280.0), px(800.0)), cx);
-            WindowOptions {
-                window_bounds: Some(WindowBounds::Windowed(initial_bounds)),
-                titlebar: Some(TitlebarOptions {
-                    title: Some("RapidRAW".into()),
-                    appears_transparent: cfg!(target_os = "macos"),
-                    traffic_light_position: if cfg!(target_os = "macos") {
-                        Some(point(px(16.0), px(16.0)))
-                    } else {
-                        None
-                    },
-                    ..Default::default()
-                }),
-                window_decorations: if cfg!(target_os = "linux") {
-                    Some(WindowDecorations::Server)
+    } else {
+        // Desktop: 1280x800 centered with native decorations
+        let initial_bounds = Bounds::centered(None, size(px(1280.0), px(800.0)), cx);
+        WindowOptions {
+            window_bounds: Some(WindowBounds::Windowed(initial_bounds)),
+            titlebar: Some(TitlebarOptions {
+                title: Some("RapidRAW".into()),
+                appears_transparent: cfg!(target_os = "macos"),
+                traffic_light_position: if cfg!(target_os = "macos") {
+                    Some(point(px(16.0), px(16.0)))
                 } else {
                     None
                 },
-                focus: true,
-                show: true,
-                kind: WindowKind::Normal,
-                is_resizable: true,
-                is_movable: true,
                 ..Default::default()
-            }
-        };
+            }),
+            window_decorations: if cfg!(target_os = "linux") {
+                Some(WindowDecorations::Server)
+            } else {
+                None
+            },
+            focus: true,
+            show: true,
+            kind: WindowKind::Normal,
+            is_resizable: true,
+            is_movable: true,
+            ..Default::default()
+        }
+    };
 
-        cx.open_window(window_options, |window: &mut Window, cx: &mut App| {
-            let view = cx.new(|cx| MainView::new(cx));
-            cx.new(|cx| Root::new(view, window, cx))
-        })
-        .unwrap();
+    cx.open_window(window_options, |window: &mut Window, cx: &mut App| {
+        let view = cx.new(|cx| MainView::new(cx));
+        cx.new(|cx| Root::new(view, window, cx))
+    })
+    .unwrap();
 
-        cx.activate(true);
+    cx.activate(true);
+}
+
+// --- Platform-Specific Entry Points ---
+
+// Desktop entry point (called by crates/rapidraw-gpui/src/main.rs)
+#[cfg(not(any(target_os = "android", target_os = "ios")))]
+pub fn run_desktop_app() {
+    gpui_kit::application().run(|cx: &mut App| {
+        start_rapidraw_ui_common(cx);
     });
 }
 
 // Android native entrypoint
 #[cfg(target_os = "android")]
 #[unsafe(no_mangle)]
-pub fn android_main(_app: android_activity::AndroidApp) {
-    run_app();
+pub extern "C" fn android_main(_app: android_activity::AndroidApp) {
+    gpui_mobile::android::init_logger();
+
+    let platform = gpui_mobile::android::current_platform(false);
+    gpui::Application::with_platform(platform).run(|cx: &mut App| {
+        start_rapidraw_ui_common(cx);
+    });
 }
 
 // iOS native entrypoint
 #[cfg(target_os = "ios")]
 #[unsafe(no_mangle)]
 pub extern "C" fn rapidraw_ios_main() {
-    run_app();
-}
-
-// Android native entrypoint (called by the Android host)
-#[cfg(target_os = "android")]
-#[no_mangle]
-pub fn android_main(app: android_activity::AndroidApp) {
-    gpui_mobile::AndroidApp::start(app, |cx: &mut App| {
-        start_rapidraw_ui_common(cx);
-    });
-}
-
-// iOS native entrypoint (called by the iOS host)
-#[cfg(target_os = "ios")]
-#[no_mangle]
-pub extern "C" fn rapidraw_ios_main() {
-    gpui_mobile::IosApp::start(|cx: &mut App| {
+    let platform = gpui_mobile::ios::current_platform(false);
+    gpui::Application::with_platform(platform).run(|cx: &mut App| {
         start_rapidraw_ui_common(cx);
     });
 }

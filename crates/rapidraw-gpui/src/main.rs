@@ -1,4 +1,5 @@
-use rapidraw_gpui::run_app; // <--- Calls the desktop-specific entry point
+#[cfg(not(any(target_os = "android", target_os = "ios")))]
+use rapidraw_gpui::run_desktop_app;
 
 fn main() {
     // Linux Wayland workaround (remains as is)
@@ -19,6 +20,6 @@ fn main() {
             }
         }
     }
-
-    run_app(); // <--- Call the new desktop entry point
+    #[cfg(not(any(target_os = "android", target_os = "ios")))]
+    run_desktop_app();
 }

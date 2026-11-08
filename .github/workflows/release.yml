@@ -119,7 +119,7 @@ jobs:
               -output target/universal-apple-darwin/release/rapidraw-gpui
 
           elif [ "${{ matrix.platform }}" = "android" ]; then
-            cargo ndk -t arm64-v8a build --release -p rapidraw-gpui
+            cargo ndk -t arm64-v8a --platform 26 build --release -p rapidraw-gpui
 
           elif [ "${{ matrix.platform }}" = "ios" ]; then
             cargo build --release -p rapidraw-gpui --target aarch64-apple-ios
