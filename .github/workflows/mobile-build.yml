@@ -60,7 +60,7 @@ jobs:
             -t arm64-v8a \
             -P 26 \
             -o crates/rapidraw_gpui/android/gradle/app/src/main/jniLibs \
-            build -p rapidraw_gpui --lib $PROFILE_FLAG
+            build -p rapidraw-gpui --lib $PROFILE_FLAG
 
       - name: Assemble debug APK
         working-directory: crates/rapidraw_gpui/android/gradle
@@ -71,8 +71,8 @@ jobs:
       - name: Upload Android APK
         uses: actions/upload-artifact@v4
         with:
-          name: rapidraw_gpui-android-apk
-          path: crates/rapidraw_gpui/android/gradle/app/build/outputs/apk/debug/*.apk
+          name: rapidraw-gpui-android-apk
+          path: crates/rapidraw-gpui/android/gradle/app/build/outputs/apk/debug/*.apk
 
   # ─────────────────────────────────────────────────────────────────────────────
   # iOS Build (Rust staticlib + Xcode build)
@@ -102,14 +102,14 @@ jobs:
             PROFILE_FLAG="--release"
           fi
 
-          cargo build -p rapidraw_gpui --lib --target aarch64-apple-ios $PROFILE_FLAG
+          cargo build -p rapidraw-gpui --lib --target aarch64-apple-ios $PROFILE_FLAG
 
       - name: Generate Xcode project
         working-directory: crates/rapidraw_gpui/ios
         run: xcodegen generate
 
       - name: Build iOS App (Unsigned)
-        working-directory: crates/rapidraw_gpui/ios
+        working-directory: crates/rapidraw-gpui/ios
         run: |
           CONFIG="Release"
           if [ "${{ inputs.build_profile }}" = "debug" ]; then
@@ -133,5 +133,5 @@ jobs:
       - name: Upload iOS App Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: rapidraw_gpui-ios-app
-          path: crates/rapidraw_gpui/ios/build/Build/Products/*-iphoneos/*.app
+          name: rapidraw-gpui-ios-app
+          path: crates/rapidraw-gpui/ios/build/Build/Products/*-iphoneos/*.app

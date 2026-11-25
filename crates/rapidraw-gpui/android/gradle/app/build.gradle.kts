@@ -1,4 +1,4 @@
-// App module build.gradle.kts for the rapidraw_gpui Android Example.
+// App module build.gradle.kts for the rapidraw-gpui Android Example.
 //
 // This module packages the pre-compiled Rust native library into an APK
 // that uses Android's NativeActivity to host the GPUI application.
@@ -67,9 +67,9 @@ android {
     }
 
     // Tell Gradle where the pre-built .so files live.
-    sourceSets {
+   sourceSets {
         getByName("main") {
-            jniLibs.srcDirs("src/main/jniLibs")
+            jniLibs.directories.add("src/main/jniLibs")
         }
     }
 

@@ -115,8 +115,8 @@ jobs:
         shell: bash
         run: |
           if [ "${{ matrix.platform }}" = "macos" ]; then
-            cargo build --release -p rapidraw_gpui --target aarch64-apple-darwin
-            cargo build --release -p rapidraw_gpui --target x86_64-apple-darwin
+            cargo build --release -p rapidraw-gpui --target aarch64-apple-darwin
+            cargo build --release -p rapidraw-gpui --target x86_64-apple-darwin
 
             mkdir -p target/universal-apple-darwin/release
             lipo -create \
@@ -125,13 +125,13 @@ jobs:
               -output target/universal-apple-darwin/release/rapidraw_gpui
 
           elif [ "${{ matrix.platform }}" = "android" ]; then
-            cargo ndk -t arm64-v8a --platform 26 build --release -p rapidraw_gpui
+            cargo ndk -t arm64-v8a --platform 26 build --release -p rapidraw-gpui
 
           elif [ "${{ matrix.platform }}" = "ios" ]; then
-            cargo build --release -p rapidraw_gpui --target aarch64-apple-ios
+            cargo build --release -p rapidraw-gpui --target aarch64-apple-ios
 
           else
-            cargo build --release -p rapidraw_gpui --target ${{ matrix.target }}
+            cargo build --release -p rapidraw-gpui --target ${{ matrix.target }}
           fi
 
       # Packages and structures payload properly
