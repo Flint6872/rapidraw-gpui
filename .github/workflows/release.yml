@@ -2,10 +2,16 @@ name: Release Automation
 
 on:
   workflow_dispatch:
-  push:
-    tags:
-      - "v*" # Triggers automatically when you push a tag like v1.0.0
-
+   inputs:
+      build_profile:
+        description: "Cargo build profile"
+        required: true
+        default: "debug"
+        type: choice
+        options:
+          - debug
+          - release
+          -
 permissions:
   contents: write
 
