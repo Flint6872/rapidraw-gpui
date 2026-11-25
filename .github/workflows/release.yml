@@ -30,25 +30,25 @@ jobs:
           - os: ubuntu-22.04
             target: x86_64-unknown-linux-gnu
             archive_name: rapidraw-linux-x86_64.tar.gz
-            binary_name: rapidraw-gpui
+            binary_name: rapidraw_gpui
             platform: linux
 
           - os: ubuntu-24.04-arm
             target: aarch64-unknown-linux-gnu
             archive_name: rapidraw-linux-aarch64.tar.gz
-            binary_name: rapidraw-gpui
+            binary_name: rapidraw_gpui
             platform: linux
 
           - os: windows-latest
             target: x86_64-pc-windows-msvc
             archive_name: rapidraw-windows.zip
-            binary_name: rapidraw-gpui.exe
+            binary_name: rapidraw_gpui.exe
             platform: windows
 
           - os: macos-15
             target: universal-apple-darwin
             archive_name: rapidraw-macos.dmg
-            binary_name: rapidraw-gpui
+            binary_name: rapidraw_gpui
             platform: macos
 
           # --- Mobile Targets ---
@@ -115,23 +115,23 @@ jobs:
         shell: bash
         run: |
           if [ "${{ matrix.platform }}" = "macos" ]; then
-            cargo build --release -p rapidraw-gpui --target aarch64-apple-darwin
-            cargo build --release -p rapidraw-gpui --target x86_64-apple-darwin
+            cargo build --release -p rapidraw_gpui --target aarch64-apple-darwin
+            cargo build --release -p rapidraw_gpui --target x86_64-apple-darwin
 
             mkdir -p target/universal-apple-darwin/release
             lipo -create \
-              target/aarch64-apple-darwin/release/rapidraw-gpui \
-              target/x86_64-apple-darwin/release/rapidraw-gpui \
-              -output target/universal-apple-darwin/release/rapidraw-gpui
+              target/aarch64-apple-darwin/release/rapidraw_gpui \
+              target/x86_64-apple-darwin/release/rapidraw_gpui \
+              -output target/universal-apple-darwin/release/rapidraw_gpui
 
           elif [ "${{ matrix.platform }}" = "android" ]; then
-            cargo ndk -t arm64-v8a --platform 26 build --release -p rapidraw-gpui
+            cargo ndk -t arm64-v8a --platform 26 build --release -p rapidraw_gpui
 
           elif [ "${{ matrix.platform }}" = "ios" ]; then
-            cargo build --release -p rapidraw-gpui --target aarch64-apple-ios
+            cargo build --release -p rapidraw_gpui --target aarch64-apple-ios
 
           else
-            cargo build --release -p rapidraw-gpui --target ${{ matrix.target }}
+            cargo build --release -p rapidraw_gpui --target ${{ matrix.target }}
           fi
 
       # Packages and structures payload properly
@@ -141,14 +141,14 @@ jobs:
           if [ "${{ matrix.platform }}" = "macos" ]; then
             mkdir -p RapidRAW.app/Contents/MacOS
             mkdir -p RapidRAW.app/Contents/Resources
-            cp target/universal-apple-darwin/release/rapidraw-gpui RapidRAW.app/Contents/MacOS/
+            cp target/universal-apple-darwin/release/rapidraw_gpui RapidRAW.app/Contents/MacOS/
 
             echo '<?xml version="1.0" encoding="UTF-8"?>
             <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
             <plist version="1.0">
             <dict>
                 <key>CFBundleExecutable</key>
-                <string>rapidraw-gpui</string>
+                <string>rapidraw_gpui</string>
                 <key>CFBundleIdentifier</key>
                 <string>com.rapidraw.app</string>
                 <key>CFBundleName</key>

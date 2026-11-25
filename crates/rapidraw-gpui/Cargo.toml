@@ -1,5 +1,5 @@
 [package]
-name = "rapidraw-gpui"
+name = "rapidraw_gpui"
 version = "0.0.1"
 edition = "2024"
 
@@ -8,7 +8,7 @@ name = "rapidraw_gpui"
 crate-type = ["lib", "cdylib", "staticlib"]
 
 [[bin]]
-name = "rapidraw-gpui"
+name = "rapidraw_gpui"
 path = "src/main.rs"
 
 [dependencies]

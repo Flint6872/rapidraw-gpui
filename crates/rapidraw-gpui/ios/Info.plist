@@ -6,9 +6,9 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleExecutable</key>
-    <string>rapidraw-gpui</string>
+    <string>rapidraw_gpui</string>
     <key>CFBundleIdentifier</key>
-    <string>dev.gpui.rapidraw-gpui.example</string>
+    <string>dev.gpui.rapidraw_gpui.example</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
@@ -62,7 +62,7 @@
     <array>
         <dict>
             <key>CFBundleURLName</key>
-            <string>dev.gpui.rapidraw-gpui.example</string>
+            <string>dev.gpui.rapidraw_gpui.example</string>
             <key>CFBundleURLSchemes</key>
             <array>
                 <string>gpui</string>

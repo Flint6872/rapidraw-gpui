@@ -1,4 +1,4 @@
-package dev.gpui.rapidraw-gpui;
+package dev.gpui.rapidraw_gpui;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;

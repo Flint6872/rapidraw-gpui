@@ -1,4 +1,4 @@
-// App module build.gradle.kts for the rapidraw-gpui Android Example.
+// App module build.gradle.kts for the rapidraw_gpui Android Example.
 //
 // This module packages the pre-compiled Rust native library into an APK
 // that uses Android's NativeActivity to host the GPUI application.
@@ -18,11 +18,11 @@ plugins {
 }
 
 android {
-    namespace = "dev.gpui.rapidraw-gpui.example"
+    namespace = "dev.gpui.rapidraw_gpui.example"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "dev.gpui.rapidraw-gpui.example"
+        applicationId = "dev.gpui.rapidraw_gpui.example"
         minSdk = 26          // Vulkan 1.0 is mandatory from API 26+
         targetSdk = 34
         versionCode = 1
@@ -35,7 +35,7 @@ android {
         }
 
         // Forward the library name to the manifest via a placeholder.
-        manifestPlaceholders["nativeLibraryName"] = "rapidraw-gpui"
+        manifestPlaceholders["nativeLibraryName"] = "rapidraw_gpui"
     }
 
     buildTypes {
@@ -78,10 +78,10 @@ android {
         // release mode and stripping again can break backtraces.
         jniLibs {
             keepDebugSymbols += listOf(
-                "*/arm64-v8a/librapidraw-gpui.so",
-                "*/armeabi-v7a/librapidraw-gpui.so",
-                "*/x86_64/librapidraw-gpui.so",
-                "*/x86/librapidraw-gpui.so"
+                "*/arm64-v8a/librapidraw_gpui.so",
+                "*/armeabi-v7a/librapidraw_gpui.so",
+                "*/x86_64/librapidraw_gpui.so",
+                "*/x86/librapidraw_gpui.so"
             )
         }
     }

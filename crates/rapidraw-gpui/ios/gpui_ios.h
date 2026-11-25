@@ -102,7 +102,7 @@ void* gpui_ios_get_window(void);
 /// Register the example app's root view with the GPUI platform.
 ///
 /// This must be called BEFORE gpui_ios_run_demo() so that the GPUI run loop
-/// knows which view to create. Defined by the example crate (not gpui-rapidraw-gpui).
+/// knows which view to create. Defined by the example crate (not gpui-rapidraw_gpui).
 void gpui_ios_register_app(void);
 
 /// Run the GPUI iOS application.

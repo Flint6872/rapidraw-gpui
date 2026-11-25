@@ -274,7 +274,7 @@ fn start_rapidraw_ui_common(cx: &mut App) {
 
 // --- Platform-Specific Entry Points ---
 
-// Desktop entry point (called by crates/rapidraw-gpui/src/main.rs)
+// Desktop entry point (called by crates/rapidraw_gpui/src/main.rs)
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 pub fn run_desktop_app() {
     gpui_kit::application().run(|cx: &mut App| {

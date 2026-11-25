@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "rapidraw-gpui"
+rootProject.name = "rapidraw_gpui"
 include(":app")
