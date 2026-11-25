@@ -5795,7 +5795,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rapidraw-gpui"
+name = "rapidraw_gpui"
 version = "0.0.1"
 dependencies = [
  "android-activity",
